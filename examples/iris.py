@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 
-from src.network import Network
+from tfscat.network import Network
 
 def load_data():
     """Users: manage.
@@ -22,7 +22,7 @@ def load_data():
                                   location='*',
                                   channel='*',
                                   starttime=UTCDateTime("2012-07-25T00:00:00"),
-                                  endtime=UTCDateTime("2012-07-27T00:00:00"))
+                                  endtime=UTCDateTime("2012-07-25T04:00:00"))
     stream.detrend("linear")
     stream.merge(method=1)
     stream.detrend("linear")
@@ -46,8 +46,8 @@ BANKS = (
     {"octaves": 9, "resolution": 1, "quality": 3}
 )
 feature_extractor = Sequential([Network(BANKS,
-                                        bins=X.shape[1],
-                                        sampling_rate=100.0,
+                                        bins=SAMPLES_PER_SEGMENT,
+                                        sampling_rate=SAMPLING_RATE,
                                         pool_type='avg',
                                         data_format='channels_last',
                                         combine=True),
@@ -60,6 +60,6 @@ dataset = tf.keras.utils.timeseries_dataset_from_array(X.T,
                                                        sequence_stride=SAMPLES_PER_STEP,
                                                        batch_size=128)
 
-p = feature_extractor.predict(dataset)
+p = feature_extractor.predict(dataset, verbose=1)
 
 print(p.shape)
