@@ -1,11 +1,13 @@
 from obspy.clients.fdsn import Client
 from obspy.core import UTCDateTime
+from sklearn.cluster import AgglomerativeClustering
 
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 
 from tfscat.network import Network
+import time
 
 def load_data():
     """Users: manage.
@@ -22,7 +24,7 @@ def load_data():
                                   location='*',
                                   channel='*',
                                   starttime=UTCDateTime("2012-07-25T00:00:00"),
-                                  endtime=UTCDateTime("2012-07-25T04:00:00"))
+                                  endtime=UTCDateTime("2012-07-30T00:00:00"))
     stream.detrend("linear")
     stream.merge(method=1)
     stream.detrend("linear")
@@ -51,15 +53,20 @@ feature_extractor = Sequential([Network(BANKS,
                                         pool_type='avg',
                                         data_format='channels_last',
                                         combine=True),
-                                tf.keras.layers.Lambda(lambda x: tf.math.log(x + tf.keras.backend.epsilon())),
-                                tf.keras.layers.BatchNormalization()])
+                                tf.keras.layers.Lambda(lambda x: tf.math.log(x + tf.keras.backend.epsilon()))])
 
 dataset = tf.keras.utils.timeseries_dataset_from_array(X.T,
                                                        None, 
                                                        sequence_length=SAMPLES_PER_SEGMENT,
                                                        sequence_stride=SAMPLES_PER_STEP,
-                                                       batch_size=128)
+                                                       batch_size=32)
 
+start = time.time()
 p = feature_extractor.predict(dataset, verbose=1)
+end = time.time()
+print('Elapsed time:', end - start)
 
-print(p.shape)
+clusters = AgglomerativeClustering(5).fit_predict(p)
+
+np.savez('tf/output/output.npz', cluster=clusters, times=T)
+

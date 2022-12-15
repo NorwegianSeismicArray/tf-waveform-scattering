@@ -17,7 +17,7 @@ setuptools.setup(
     description="Tensorflow based waveform scattering.",
     long_description=read_me_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/NorwegianSeismicArray/nais",
+    url="https://github.com/NorwegianSeismicArray/tf-waveform-scattering",
     packages=['tfscat'],
     install_requires=req,
     classifiers=[
