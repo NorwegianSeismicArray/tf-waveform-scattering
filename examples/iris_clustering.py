@@ -23,7 +23,7 @@ def load_data():
                                   station='DC06',
                                   location='*',
                                   channel='*',
-                                  starttime=UTCDateTime("2012-07-25T00:00:00"),
+                                  starttime=UTCDateTime("2012-07-23T00:00:00"),
                                   endtime=UTCDateTime("2012-07-30T00:00:00"))
     stream.detrend("linear")
     stream.merge(method=1)
@@ -37,6 +37,7 @@ def load_data():
     return times, data
 
 T, X = load_data()
+print(X.shape)
 
 SEGMENT = 1200
 STEP = 600
