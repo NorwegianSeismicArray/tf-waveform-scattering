@@ -51,16 +51,14 @@ class Network(tf.keras.Model):
             x = scalogram
             pooled = self.pool(scalogram)
             output.append(pooled)
-            print(pooled.shape)
 
         if self.combine:
-            if self.pool_type is not None:
-                l = tf.keras.layers.Flatten()
-            else:
-                l = tf.keras.layers.Reshape((-1, x.shape[-1]))
+            l = tf.keras.layers.Reshape((inputs.shape[1], -1))
             output = [l(out) for out in output]
+            for out in output:
+                print(out.shape)
             output = tf.concat(output, axis=1)
-            if self.data_format == 'channels_last' and self.pool_type is None:
+            if self.data_format == 'channels_last':
                 output = tf.transpose(output, [0, 2, 1])
         return output
 
