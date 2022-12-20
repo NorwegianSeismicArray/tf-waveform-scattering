@@ -53,8 +53,8 @@ class Network(tf.keras.Model):
             output.append(pooled)
 
         if self.combine:
-            l = tf.keras.layers.Reshape((inputs.shape[1], -1))
-            output = [l(out) for out in output]
+            print(inputs.shape)
+            output = [tf.keras.layers.Reshape((inputs.shape[1], -1))(out) for out in output]
             for out in output:
                 print(out.shape)
             output = tf.concat(output, axis=1)
