@@ -53,12 +53,11 @@ class Network(tf.keras.Model):
             output.append(pooled)
 
         if self.combine:
-            print(inputs.shape)
-            output = [tf.keras.layers.Reshape((inputs.shape[1], -1))(out) for out in output]
+            output = [tf.keras.layers.Reshape((inputs.shape[2], -1))(out) for out in output]
             for out in output:
                 print(out.shape)
             output = tf.concat(output, axis=1)
-            if self.data_format == 'channels_last':
+            if self.data_format == 'channels_last' and self.pool_type is not None:
                 output = tf.transpose(output, [0, 2, 1])
         return output
 
