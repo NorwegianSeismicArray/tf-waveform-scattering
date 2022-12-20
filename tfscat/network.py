@@ -2,6 +2,10 @@
 import tensorflow as tf
 from tfscat.wavelet import Scattering
 
+def median(x):
+    mid = x.get_shape()[-1]//2 + 1
+    return tf.math.top_k(x, mid)[..., -1]
+
 class Network(tf.keras.Model):
     def __init__(self,
                  layer_properties,
@@ -25,6 +29,8 @@ class Network(tf.keras.Model):
             self.pool = lambda x: tf.math.reduce_mean(x, axis=-1)
         elif pool_type == 'max':
             self.pool = lambda x: tf.math.reduce_max(x, axis=-1)
+        elif pool_type == 'median':
+            self.pool = lambda x: median(x)
         elif pool_type is None:
             self.pool = lambda x: x
         else:
