@@ -4,7 +4,7 @@ from tfscat.wavelet import Scattering
 
 def median(x):
     mid = x.get_shape()[-1]//2 + 1
-    return tf.math.top_k(x, mid)[..., -1]
+    return tf.math.top_k(x, mid).values[-1]
 
 class Network(tf.keras.Model):
     def __init__(self,
