@@ -51,6 +51,7 @@ class Network(tf.keras.Model):
             x = scalogram
             pooled = self.pool(scalogram)
             output.append(pooled)
+            print(pooled.shape)
 
         if self.combine:
             if self.pool_type is not None:
