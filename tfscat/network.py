@@ -24,6 +24,7 @@ class Network(tf.keras.Model):
         self.data_format = data_format
         self.combine = combine
         self.pool_type = pool_type
+        self.bins = bins
 
         if pool_type == 'avg':
             self.pool = lambda x: tf.math.reduce_mean(x, axis=-1)
@@ -53,10 +54,11 @@ class Network(tf.keras.Model):
             output.append(pooled)
 
         if self.combine:
-            output = [tf.keras.layers.Reshape((inputs.shape[2], -1))(out) for out in output]
-            output = tf.keras.layers.Concatenate(axis=-1)(output)
-            if self.data_format == 'channels_last' and self.pool_type is not None:
+            output = [tf.reshape(out, (out.shape[0], -1, self.bins)) for out in output]
+            output = tf.concat(output, axis=1)
+            if self.data_format == 'channels_last' and self.pool_type is None:
                 output = tf.transpose(output, [0, 2, 1])
+                
         return output
 
     @property
