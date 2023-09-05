@@ -10,6 +10,7 @@ class Network(tf.keras.Model):
     def __init__(self,
                  layer_properties,
                  bins=128,
+                 batch_size=32,
                  sampling_rate=1.0,
                  pool_type='avg',
                  data_format='channels_last',
@@ -25,6 +26,7 @@ class Network(tf.keras.Model):
         self.combine = combine
         self.pool_type = pool_type
         self.bins = bins
+        self.batch_size = batch_size
 
         if pool_type == 'avg':
             self.pool = lambda x: tf.math.reduce_mean(x, axis=-1)
@@ -55,7 +57,7 @@ class Network(tf.keras.Model):
             print(pooled.shape)
 
         if self.combine:
-            output = [tf.reshape(out, (out.shape[0], -1, self.bins)) for out in output]
+            output = [tf.reshape(out, (self.batch_size, -1, self.bins)) for out in output]
             output = tf.concat(output, axis=1)
             if self.data_format == 'channels_last' and self.pool_type is None:
                 output = tf.transpose(output, [0, 2, 1])
