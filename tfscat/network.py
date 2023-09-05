@@ -52,6 +52,7 @@ class Network(tf.keras.Model):
             x = scalogram
             pooled = self.pool(scalogram)
             output.append(pooled)
+            print(pooled.shape)
 
         if self.combine:
             output = [tf.reshape(out, (out.shape[0], -1, self.bins)) for out in output]
@@ -64,3 +65,4 @@ class Network(tf.keras.Model):
     @property
     def depth(self):
         return len(self.banks)
+
